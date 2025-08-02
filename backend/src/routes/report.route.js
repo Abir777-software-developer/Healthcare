@@ -8,14 +8,19 @@ const router = express.Router()
 router.use(protectRoute)
 
 router.post("/postReport",
-    upload.fields([
-        {
-            name : "report",
-            maxCount : 1
-        }
-    ]),
+    (req, res, next) => {
+        const uploadHandler = upload.fields([{ name: "report", maxCount: 1 }]);
+        
+        uploadHandler(req, res, (err) => {
+            if (err) {
+                console.log(err.message)
+                return res.status(400).json({ message: "Upload related failure" });
+            }
+            next();
+        });
+    },
     handleReport
-)
+);
 
 
 export default router
